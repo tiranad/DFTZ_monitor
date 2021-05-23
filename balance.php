@@ -12,7 +12,7 @@ curl_setopt_array($curl, array(
 ));
 $getmasternodestatus = curl_exec($curl);
 $masternodestatus = json_decode($getmasternodestatus);
-$mnaddress = $masternodestatus->{'result'}->{'addr'};
+$mnaddress = $masternodestatus->{'result'}->{'dmnState'}->{'ownerAddress'};
 curl_close($curl);
 
 
