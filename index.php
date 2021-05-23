@@ -26,7 +26,7 @@ curl_setopt_array($curl, array(
   CURLOPT_USERPWD => $rpc_user . ":" . $rpc_password,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"getmasternodestatus\"\n}",
+  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"masternode status\"\n}",
 ));
 $getmasternodestatus = curl_exec($curl);
 $getmasternodestatus = json_decode($getmasternodestatus);
@@ -43,7 +43,7 @@ curl_setopt_array($curl, array(
   CURLOPT_USERPWD => $rpc_user . ":" . $rpc_password,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"listmasternodes\"\n}",
+  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"masternodelist\"\n}",
 ));
 $listmasternodes = curl_exec($curl);
 $listmasternodes = json_decode($listmasternodes);
@@ -90,7 +90,7 @@ $timenow = date($date_format, microtime(true));
 
 <!DOCTYPE html>
 <html>
-<title>XUEZ NODE MONITOR</title>
+<title>DFTZ NODE MONITOR</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -104,7 +104,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 <!-- Top container -->
 <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
 
-  <span class="w3-bar-item w3-right"><b>xuez_monitor</b> | <?php print $version;?></span>
+  <span class="w3-bar-item w3-right"><b>dftz_monitor</b> | <?php print $version;?></span>
 </div>
 
 <!-- !PAGE CONTENT! -->
@@ -222,23 +222,23 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       if(!empty($mnaddress)){
         echo '<li class="w3-padding-16 w3-white">';
         echo '<span class="w3-xlarge">';
-        echo 'Masternode Address : <tr><a href=http://' . $xuez_explorer . '/address/' . $mnaddress . '>' . $mnaddress . '</a></tr>';
-        echo "<td><a href=http://" . $xuez_explorer . "/address/" . $mnlist[$i]->{'addr'} .">" . $mnlist[$i]->{'addr'} . "</a></td>";
+        echo 'Masternode Address : <tr><a href=http://' . $dftz_explorer . '/address/' . $mnaddress . '>' . $mnaddress . '</a></tr>';
+        echo "<td><a href=http://" . $dftz_explorer . "/address/" . $mnlist[$i]->{'addr'} .">" . $mnlist[$i]->{'addr'} . "</a></td>";
       }
       elseif(empty($mnaddress)){
         echo '<li class="w3-padding-16 w3-orange">';
         echo '<span class="w3-xlarge">';
-        echo 'XUEZ Daemon is running but is not a Masternode';
+        echo 'DFTZ Daemon is running but is not a Masternode';
       }
     }
     else{
       echo '<li class="w3-padding-16 w3-orange">';
       echo '<span class="w3-xlarge">';
-      echo 'Cannot connect to XUEZ node [url=' . $rpc_url . '] [port=' . $rpc_port . ']';
+      echo 'Cannot connect to DFTZ node [url=' . $rpc_url . '] [port=' . $rpc_port . ']';
       echo '</br>';
-      echo '- Edit <b>rpc_user</b> and <b>rpc_password</b> in <b>config.php</b> (use the same credentials as xuez.conf)';
+      echo '- Edit <b>rpc_user</b> and <b>rpc_password</b> in <b>config.php</b> (use the same credentials as dftz.conf)';
       echo '</br>';
-      echo '- Maybe your xuez daemon is not running';
+      echo '- Maybe your DraftCoinZ "dftzd" daemon is not running';
     }
     echo '</li>';
     echo '</ul>';
@@ -267,12 +267,12 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
   <!-- Footer -->
   <footer class="w3-container w3-padding-16 w3-dark-grey">
-    <h3 class="w3-bottombar w3-border-blue">Support XUEZ</h3>
-    <p>Source code on <a href="https://github.com/dirtyak/xuez_monitor" target="_blank">GitHub</a></p>
-    <p>XUEZ Links :
-      <a href="http://xuez.donkeypool.com">Explorer</a> |
-      <a href="https://discordapp.com/invite/3Yypx4C">Discord</a> |
-      <a href="https://xuezcoin.com/">Website</a>
+    <h3 class="w3-bottombar w3-border-blue">Support DFTZ</h3>
+    <p>Source code on <a href="https://github.com/dirtyak/dftz_monitor" target="_blank">GitHub</a></p>
+    <p>DFTZ Links :
+      <a href="http://dftz-explorer.btcdraft.com">Explorer</a> |
+      <a href="https://discord.gg/XD6H8btp2Z">Discord</a> |
+      <a href="https://draftcoinz.com/">Website</a>
     </p>
   </footer>
 
