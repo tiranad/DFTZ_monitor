@@ -3,7 +3,7 @@
   <b>
     <i class="fa fa-dashboard"></i>
     <a href="/">Dashboard</a> |
-    <a href="mnlist.php">Masternodes</a>
+    <a href="mnlist.php">DraftCoinZ Masternodes</a>
   </b>
 </h5>
 </header>
