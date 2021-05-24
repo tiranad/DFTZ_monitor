@@ -8,30 +8,35 @@ curl_setopt_array($curl, array(
   CURLOPT_USERPWD => $rpc_user . ":" . $rpc_password,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"getnetworkinfo\"\n}",
-));
+  CURLOPT_POSTFIELDS => '{"jsonrpc": "1.0", "id":"curltest","method": "getnetworkinfo"}',));
 $getnetworkinfo = curl_exec($curl);
 $getnetworkinfo = json_decode($getnetworkinfo);
-$networkinfo = $getnetworkinfo->{'result'};
-$version = $networkinfo->{'subversion'};
-$ipv4 = $networkinfo->{'localaddresses'}[0]->{'address'};
+$networkinfo = $getnetworkinfo->result;
+$version = $networkinfo->subversion;
+$ipv4 = $networkinfo->localaddresses;
+//print_r($networkinfo);
 curl_close($curl);
 
 
 
 $curl = curl_init();
+$command = "masternode status";
+$postdata=["jsonrpc"=>"1.0","id"=>"curltest","method"=>$command];
+$json = json_encode($postdata);
 curl_setopt_array($curl, array(
   CURLOPT_PORT => $rpc_port,
   CURLOPT_URL => $rpc_url . ":" . $rpc_port,
   CURLOPT_USERPWD => $rpc_user . ":" . $rpc_password,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"masternode status\"\n}",
-));
+  CURLOPT_POSTFIELDS => $json,));
 $getmasternodestatus = curl_exec($curl);
 $getmasternodestatus = json_decode($getmasternodestatus);
-$masternodestatus = $getmasternodestatus->{'result'};
-$mnaddress = $masternodestatus->{'addr'};
+$masternodestatus = $getmasternodestatus;
+//$mnaddress = $masternodestatus->{'addr'};
+echo "<br><br>";
+var_dump($getmasternodestatus);
+$mnaddress = $masternodestatus->owneraddress;
 curl_close($curl);
 
 
@@ -43,44 +48,47 @@ curl_setopt_array($curl, array(
   CURLOPT_USERPWD => $rpc_user . ":" . $rpc_password,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"masternodelist\"\n}",
+  CURLOPT_POSTFIELDS => '{"jsonrpc":"1.0","id":"curltest","method": "masternodelist"}',
 ));
 $listmasternodes = curl_exec($curl);
 $listmasternodes = json_decode($listmasternodes);
-$mnlist = $listmasternodes->{'result'};
+$mnlist = $listmasternodes;
+//var_dump($mnlist);
 curl_close($curl);
 
 
-  for ($i = 0; $i < count($mnlist); $i++) {
-      if($mnlist[$i]->{'addr'} == $mnaddress)
+  //for ($i = 0; $i < count($mnlist); $i++) {
+  foreach ($mnlist as $obj) {
+      if($obj->owneraddress == $mnaddress)
       {
-        $mnstatus = $mnlist[$i]->{'status'};
-        $mnnetwork = $mnlist[$i]->{'network'};
+        $mnstatus = $obj->status;
+        $mnnetwork = $obj->network;
 
-        if($mnlist[$i]->{'lastseen'} == 0){
+        if($obj->lastpaidblock == 0){
           $mnlastseen = "Not yet";
         }
         else{
-          $mnlastseen = date($date_format, $mnlist[$i]->{'lastseen'});
+          $mnlastseen = date($date_format, $obj->lastpaidtime);
         }
 
-        if($mnlist[$i]->{'lastpaid'} == 0){
+        if($obj->lastpaidblock == 0){
           $mnlastpaid = "Not yet";
         }
         else{
-          $lastpaid = $mnlist[$i]->{'lastpaid'};
+          $lastpaid = $obj->lastpaidtime;
           $interval =  time() - $lastpaid ;
           $sincelastpaid = number_format(($interval / 3600), 0);
-          $mnlastpaid = date($date_format, $mnlist[$i]->{'lastpaid'});
-          $mnlastpaid = date($date_format, $mnlist[$i]->{'lastpaid'});
+          $mnlastpaid = date($date_format, $obj->lastpaidtime);
+          $mnlastpaid = date($date_format, $obj->lastpaidtime);
         }
 
-        if($mnlist[$i]->{'activetime'} == 0){
+        if($obj->lastpaidblock == ''){
           $mnactivetime = "Not yet";
         }
         else{
-          $mnactivetime = number_format(($mnlist[$i]->{'activetime'} / 86400), 0);
-        }
+          $mnactivetime = $obj->registeredheight;
+	}
+ 
       }
     }
 
@@ -174,7 +182,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       }
       elseif($mnactivetime > 1){
         echo '<div class="w3-container w3-border-bottom w3-border-white w3-purple w3-padding-16"><div class="w3-right">';
-        echo '<h3>' . $mnactivetime . ' days</h3>';
+        echo '<h3>Registered @ Block: ' . $mnactivetime . '</h3>';
         echo "</div>";
         echo '<div class="w3-clear"></div>';
         echo "<h4>Active</h4>";
@@ -223,7 +231,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
         echo '<li class="w3-padding-16 w3-white">';
         echo '<span class="w3-xlarge">';
         echo 'Masternode Address : <tr><a href=http://' . $dftz_explorer . '/address/' . $mnaddress . '>' . $mnaddress . '</a></tr>';
-        echo "<td><a href=http://" . $dftz_explorer . "/address/" . $mnlist[$i]->{'addr'} .">" . $mnlist[$i]->{'addr'} . "</a></td>";
+        echo "<td><a href=http://" . $dftz_explorer . "/address/" . $obj->owneraddress .">" . $obj->owneraddress . "</a></td>";
       }
       elseif(empty($mnaddress)){
         echo '<li class="w3-padding-16 w3-orange">';

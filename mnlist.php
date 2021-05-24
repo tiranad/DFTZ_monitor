@@ -8,11 +8,13 @@ curl_setopt_array($curl, array(
   CURLOPT_USERPWD => $rpc_user . ":" . $rpc_password,
   CURLOPT_CUSTOMREQUEST => "POST",
   CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POSTFIELDS => "{\n\"jsonrpc\": \"1.0\",\n\"id\":\"curltest\",\n\"method\": \"masternodelist\"\n}",
+  CURLOPT_POSTFIELDS => '{"jsonrpc": "1.0","id":"curltest","method": "masternodelist"}',
 ));
-$listmasternodes = curl_exec($curl);
-$listmasternodes = json_decode($listmasternodes);
-$mnlist = $listmasternodes->{'result'};
+$result = curl_exec($curl);
+$listmasternodes = json_decode($result);
+//var_dump($listmasternodes);
+$mnlist = $listmasternodes;
+//var_dump($mnlist);
 curl_close($curl);
 
 ?>
@@ -78,26 +80,26 @@ if(!empty($_POST["address"])){
 echo '<div class="w3-container w3-padding">';
 echo "<h4>Masternode Found:</h4>";
 for ($i = 0; $i < count($mnlist); $i++) {
-    if($mnlist[$i]->{'addr'} == ($_POST["address"]))
+    if($mnlist[$i]->{'owneraddress'} == ($_POST["address"]))
     {
     echo '<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">';
     echo '<tr>';
-    echo   '<td><b>Rank</b></td>';
+    //echo   '<td><b>Rank</b></td>';
     echo   '<td><b>Status</b></td>';
     echo   '<td><b>Address</b></td>';
     echo   '<td><b>Last Seen</b></td>';
     echo   '<td><b>Last Paid</b></td>';
-    echo   '<td><b>Active Time</b></td>';
+    //echo   '<td><b>Active Time</b></td>';
     echo   '</tr>';    echo "<tr>";
-    echo "<td>" . $mnlist[$i]->{'rank'} . "</td>";
+   // echo "<td>" . $mnlist[$i]->{'rank'} . "</td>";
     echo "<td>" . $mnlist[$i]->{'status'} . "</td>";
-    echo "<td><a href=http://" . $dftz_explorer . "/address/" . $mnlist[$i]->{'addr'} .">" . $mnlist[$i]->{'addr'} . "</a></td>";
-    echo "<td>" . date($date_format, $mnlist[$i]->{'lastseen'}) . "</td>";
+    echo "<td><a href=http://" . $dftz_explorer . "/address/" . $mnlist[$i]->{'owneraddress'} .">" . $mnlist[$i]->{'owneraddress'} . "</a></td>";
+    echo "<td>" . date($date_format, $mnlist[$i]->{'lastpaidtime'}) . "</td>";
 
-    if($mnlist[$i]->{'lastpaid'} == 0){echo "<td>Not yet</td>";}
+    if($mnlist[$i]->{'lastpaidblock'} == 0){echo "<td>Not yet</td>";}
     else{echo "<td>" . date($date_format, $mnlist[$i]->{'lastpaid'}) . "</td>";}
 
-    echo "<td>" . number_format(($mnlist[$i]->{'activetime'} / 86400), 0) . " days</td>";
+   // echo "<td>" . number_format(($mnlist[$i]->{'activetime'} / 86400), 0) . " days</td>";
     echo "</tr>";
     echo "</table>";
     }
@@ -114,29 +116,31 @@ echo '<div class="w3-container w3-padding">';
 echo "<h4>My Masternodes :</h4>";
 echo '<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">';
 echo '<tr>';
-echo '<td><b>Rank</b></td>';
+//echo '<td><b>Rank</b></td>';
 echo '<td><b>Status</b></td>';
 echo '<td><b>Address</b></td>';
 echo '<td><b>Last Seen</b></td>';
 echo '<td><b>Last Paid</b></td>';
-echo '<td><b>Active Time</b></td>';
+//echo '<td><b>Active Time</b></td>';
 echo '</tr>';
 
-  for ($i = 0; $i < count($mnlist); $i++) {
-    if(in_array($mnlist[$i]->{'addr'}, $custom_mnlist))
+  //for ($i = 0; $i < count($mnlist); $i++) {
+  foreach ($mnlist as $obj) {
+
+    if(in_array($obj->owneraddress, $custom_mnlist))
       {
         echo "<tr>";
-        echo "<td>" . $mnlist[$i]->{'rank'} . "</td>";
-        echo "<td>" . $mnlist[$i]->{'status'} . "</td>";
-        echo "<td><a href=http://" . $dftz_explorer . "/address/" . $mnlist[$i]->{'addr'} .">" . $mnlist[$i]->{'addr'} . "</a></td>";
-        echo "<td>" . date($date_format, $mnlist[$i]->{'lastseen'}) . "</td>";
-        if($mnlist[$i]->{'lastpaid'} == 0){
+  //      echo "<td>" . $mnlist[$i]->{'rank'} . "</td>";
+        echo "<td>" . $obj->status . "</td>";
+        echo "<td><a href=http://" . $dftz_explorer . "/address/" . $obj->owneraddress .">" . $obj->owneraddress . "</a></td>";
+        echo "<td>" . date($date_format, $obj->lastpaidtime) . "</td>";
+        if($obj->lastpaidblock == 0){
           echo "<td>Not yet</td>";
         }
         else{
-          echo "<td>" . date($date_format, $mnlist[$i]->{'lastpaid'}) . "</td>";
+          echo "<td>" . date($date_format, $obj->lastpaidtime) . "</td>";
         }
-        echo "<td>" . number_format(($mnlist[$i]->{'activetime'} / 86400), 0) . " days</td>";
+        //echo "<td>" . number_format(($mnlist[$i]->{'activetime'} / 86400), 0) . " days</td>";
         echo "</tr>";
       }
     }
@@ -164,23 +168,25 @@ echo '<div id="mnlist" class="w3-container">';
 echo   '<h4>All Masternodes :</h4>';
 echo   '<table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">';
 echo     '<tr>';
-echo       '<td><b>Rank</b></td>';
+//echo       '<td><b>Rank</b></td>';
 echo       '<td><b>Status</b></td>';
 echo       '<td><b>Address</b></td>';
 echo       '<td><b>Last Seen</b></td>';
 echo       '<td><b>Last Paid</b></td>';
-echo       '<td><b>Active Time</b></td>';
+//echo       '<td><b>Active Time</b></td>';
 echo     '</tr>';
 
-    for ($i = 0; $i < count($mnlist); $i++) {
+    //for ($i = 0; $i < count($mnlist); $i++) {
+    foreach ($mnlist->result as $obj) {
         echo "<tr>";
-        echo "<td>" . $mnlist[$i]->{'rank'} . "</td>";
-        echo "<td>" . $mnlist[$i]->{'status'} . "</td>";
-        echo "<td><a href=http://" . $dftz_explorer . "/address/" . $mnlist[$i]->{'addr'} .">" . $mnlist[$i]->{'addr'} . "</a></td>";
-        echo "<td>" . date($date_format, $mnlist[$i]->{'lastseen'}) . "</td>";
-        if($mnlist[$i]->{'lastpaid'} == 0){echo "<td>Not yet</td>";}
-        else{echo "<td>" . date($date_format, $mnlist[$i]->{'lastpaid'}) . "</td>";}
-        echo "<td>" . number_format(($mnlist[$i]->{'activetime'} / 86400), 0) . " days</td>";
+  //      echo "<td>" . $mnlist[$i]->{'rank'} . "</td>";
+        //echo "<td>" . print_r($obj) . "</td>";
+        echo "<td>" . $obj->status . "</td>";
+        echo "<td><a href=http://" . $dftz_explorer . "/address/" . $obj->owneraddress .">" . $obj->owneraddress . "</a></td>";
+        echo "<td>" . date($date_format, $obj->lastpaidtime) . "</td>";
+        if($obj->lastpaidblock == 0){echo "<td>Not yet</td>";}
+        else{echo "<td>" . date($date_format, $obj->lastpaidtime) . "</td>";}
+    //    echo "<td>" . number_format(($mnlist[$i]->{'activetime'} / 86400), 0) . " days</td>";
         echo "</tr>";
     }
 

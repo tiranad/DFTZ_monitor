@@ -12,7 +12,7 @@ curl_setopt_array($curl, array(
 ));
 $getmasternodestatus = curl_exec($curl);
 $masternodestatus = json_decode($getmasternodestatus);
-$mnaddress = $masternodestatus->{'result'}->{'addr'};
+$mnaddress = $masternodestatus->{'result'}->{'dmnState'}->{'ownerAddress'};
 curl_close($curl);
 
 
@@ -34,9 +34,9 @@ $obj = $obj->{'result'};
 
 if(!empty($mnaddress)){
   for ($i = 0; $i < count($obj); $i++) {
-    if($obj[$i][0][0] == ($mnaddress))
+    if($obj[$i][0] == ($mnaddress))
     {
-      $getbalance = $obj[$i][0][1];
+      $getbalance = $obj[$i][1];
     }
   }
 
