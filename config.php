@@ -1,7 +1,7 @@
 <?php
 ########## CHANGE THIS ##################################
-$rpc_user = "DFTzWALLET";
-$rpc_password = "**DFTzWALLET2020**";
+$rpc_user = "WALLETLOGIN";
+$rpc_password = "RPCPASSWORD";
 
 ########## (OPTIONS) #################################
 $rpc_url = "localhost"; # Default : localhost
